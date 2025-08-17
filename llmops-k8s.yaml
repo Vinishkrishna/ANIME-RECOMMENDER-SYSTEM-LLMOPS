@@ -1,0 +1,48 @@
+# kind: Deployment → Tells Kubernetes we are defining a Deployment (which manages Pods).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llmops-app
+  labels:
+    app: llmops
+spec:
+  replicas: 1 #replicas: 1 → Run 1 Pod
+  selector: #elector: Links the Deployment to Pods with the label app: llmops
+    matchLabels:
+      app: llmops #same name as in metadata label app
+  template: #This defines the Pod template → whenever a Pod is created by this Deployment, it will have the label app: llmops.
+    metadata:
+      labels:
+        app: llmops #same name as in metadata label app
+    spec:
+      containers:
+      - name: llmops-container
+        image: llmops-app:latest  # Use local image
+        imagePullPolicy: IfNotPresent #by default if not writing this line it will pull docker images from external sources like Docker Hub ,if GCR ther it will check it (container registry).We will be installing docker engine inside it images are stored(we want to use local image only),our image name will be llmops-app:latest
+        ports:
+          - containerPort: 8501
+        envFrom:
+          - secretRef:
+              name: llmops-secrets 
+
+# containers → Defines the container(s) inside each Pod.
+# name: llmops-container → Name of the container.
+# image: llmops-app:latest → Docker image to run (latest tag).
+# imagePullPolicy: IfNotPresent → If image is already on the Node, don’t pull again.
+# containerPort: 8501 → The app inside the container listens on port 8501 (your Streamlit app).
+# Loads environment variables from a Kubernetes Secret called llmops-secrets.
+# Example: API keys, DB passwords → not hardcoded in YAML, but securely injected at runtime.
+---
+#kind: Service → Makes Pods accessible on the network.
+apiVersion: v1
+kind: Service
+metadata:
+  name: llmops-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: llmops #same name as in metadata label app in kind:Deployment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8501 #target port will be same as container port
