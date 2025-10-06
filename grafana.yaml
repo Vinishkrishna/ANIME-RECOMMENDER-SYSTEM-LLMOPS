@@ -1,0 +1,7 @@
+grafanaCloud:
+  enabled: true
+  apiKey:
+    secretKeyRef:
+      name: grafana
+      key: apiKey
+  instance: "1396986"  # your Grafana Cloud instance name
