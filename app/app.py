@@ -14,14 +14,7 @@ pipeline = init_pipeline()
 
 st.title("Anime Recommender System")
 
-query=st.text_input("Enter your anime preferences eg. : light hearted anime with school settings")
-if query:
-    with st.spinner("Fetching recommendations for you...."):
-        response=pipeline.recommend(query)
-        st.markdown("### Recommendations")
-        st.write(response)
-
-'''
+"""
 A Dockerfile is just a set of instructions that tells Docker how to build a container image for your app.
 Think of it like a recipe 📜 for creating a container.
 '''
@@ -31,4 +24,11 @@ Kubernetes Deployment File
 Kubernetes (K8s) is a system to manage containers at scale.
 
 A Deployment file (YAML) tells Kubernetes what containers to run, how many copies, and how to keep them healthy
-'''
+"""
+query=st.text_input("Enter your anime preferences eg. : light hearted anime with school settings")
+if query:
+    with st.spinner("Fetching recommendations for you...."):
+        response=pipeline.recommend(query)
+        st.markdown("### Recommendations")
+        st.write(response)
+
